@@ -1,0 +1,24 @@
+# changelog
+
+all notable changes to the dataset will be documented in this file.
+
+## [version 1.3] - 03.03.2025
+
+### added
+- initiator_country_alpha_2: The alpha 2 country code for the initiator
+- receiver_country_alpha_2: The alpha 2 country code for the receiver
+- new dyadic dataset
+- excel formatted files for all datsets
+
+### changed
+- attribution fields are now "Not attributed" if there was no attribution for the incident
+- attribution fields are now "Unknown" if there was an attribution but a specific variables is not known e.g., when the initiator is a transnational network
+- the global dataset now ONLY contains the "settled" attribution instead of multiple attributions. Refer to the attribution dataset for all attributions. Note that there can still be multiple initiators, if the "settled attribution" attributes more than one actor
+- the Attribution dataset now also contains information on the attributed initiator.
+
+### fixed
+- an issue was fixed where additional initiator categories could in rare cases bleed into the settled attribution from additional attributions
+
+### removed
+- the json formatted file has been removed
+

@@ -1,0 +1,4 @@
+eurepoc_attribution_dataset == version 1.3.2 == extracted 04.03.2025
+eurepoc_receiver_dataset == version 1.3.2 == extracted 04.03.2025
+eurepoc_global_dataset == version 1.3.2 == extracted 04.03.2025
+eurepoc_dyadic_dataset == version 0.1.0 == extracted 04.03.2025

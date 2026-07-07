@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive Cybersecurity Incident Intelligence Dashboard analyzing 3,414 cyber incidents from the EURepoC dataset (2000-2024). Explore attack trends, geopolitical corridors, and threat patterns.">
+  <title>Cybersecurity Incident Intelligence Dashboard — EURepoC Analysis</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/globe.gl"></script>
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading cyber threat intelligence…</div>
+  </div>
+
+  <div class="dashboard-container">
+
+    <!-- ═══ Hero / Header ═══ -->
+    <header class="hero">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        Live Intelligence Dashboard
+      </div>
+      <h1>Cybersecurity Incident Intelligence</h1>
+      <p class="hero-subtitle">
+        EURepoC Global Dataset v1.3.2 — <span id="heroIncidentCount">3,414</span> incidents across
+        <span id="heroCountryCount">150+</span> countries
+        (<span id="heroDateRange">2000 – 2024</span>)
+      </p>
+    </header>
+
+    <!-- ═══ KPI Cards ═══ -->
+    <section class="kpi-grid" id="kpiGrid">
+      <div class="kpi-card">
+        <span class="kpi-icon">🎯</span>
+        <div class="kpi-value" id="kpiTotal">—</div>
+        <div class="kpi-label">Total Incidents</div>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-icon">🌍</span>
+        <div class="kpi-value" id="kpiCountries">—</div>
+        <div class="kpi-label">Countries Affected</div>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-icon">🔍</span>
+        <div class="kpi-value" id="kpiAttribution">—</div>
+        <div class="kpi-label">Attribution Rate</div>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-icon">⚡</span>
+        <div class="kpi-value" id="kpiTopAttacker">—</div>
+        <div class="kpi-label">Top Initiator</div>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-icon">🏛️</span>
+        <div class="kpi-value" id="kpiStateIncidents">—</div>
+        <div class="kpi-label">State-Linked Attacks</div>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-icon">💀</span>
+        <div class="kpi-value" id="kpiZeroDays">—</div>
+        <div class="kpi-label">Zero-Day Incidents</div>
+      </div>
+    </section>
+
+    <!-- ═══ Filters ═══ -->
+    <section class="filters-section">
+      <div class="filters-bar">
+        <div class="filter-label">🔧 Filters</div>
+
+        <div class="filter-group">
+          <label for="filterYearMin">From</label>
+          <input type="range" id="filterYearMin" min="2000" max="2024" value="2010">
+          <label for="filterYearMax">To</label>
+          <input type="range" id="filterYearMax" min="2000" max="2024" value="2024">
+          <span class="year-range-display" id="yearRangeDisplay">2010–2024</span>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterInitiator">Initiator</label>
+          <select id="filterInitiator">
+            <option value="all">All Categories</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterReceiver">Target</label>
+          <select id="filterReceiver">
+            <option value="all">All Sectors</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterCountry">Country</label>
+          <select id="filterCountry" style="min-width: 140px;">
+            <option value="all">All Countries</option>
+          </select>
+        </div>
+
+        <button class="filter-reset-btn" id="resetFilters">✕ Reset</button>
+      </div>
+    </section>
+
+    <!-- ═══ Section: 3D Threat Globe ═══ -->
+    <h2 class="section-title"><span class="icon">🌍</span> Geopolitical Threat Globe</h2>
+    <div class="chart-card globe-card" style="margin-bottom: 24px; position: relative;">
+      <div class="chart-card-header">
+        <span class="chart-card-title">Dynamic Incident Arc Mappings (Attacker → Target)</span>
+        <span class="chart-card-badge" id="globeFilterBadge">Showing All Incidents</span>
+      </div>
+      <div class="globe-container-wrapper" style="position: relative; background: #070a13; border-radius: var(--radius-md); overflow: hidden; height: 650px; display: flex; align-items: center; justify-content: center;">
+        <div id="3dGlobe" class="globe-viewport" style="width: 100%; height: 100%;"></div>
+        <div class="globe-instructions" style="position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); background: rgba(10,14,26,0.85); border: 1px solid var(--border-glass); border-radius: 100px; padding: 8px 20px; font-size: 12px; pointer-events: auto; text-align: center; backdrop-filter: blur(8px); z-index: 10; white-space: nowrap;">
+          <span>🖱️ <strong>Drag</strong> to rotate • <strong>Scroll</strong> to zoom • <strong>Click country</strong> to filter attacks</span>
+          <button id="clearGlobeFilter" style="display: none; background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.4); color: var(--accent-red); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; cursor: pointer; margin-left: 10px; transition: all var(--transition-fast);">✕ Clear Selection</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Section: Temporal Trends ═══ -->
+    <h2 class="section-title"><span class="icon">📈</span> Temporal Trends</h2>
+    <div class="charts-grid full-width">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Incidents by Year</span>
+          <span class="chart-card-badge" id="yearChartBadge">All Years</span>
+        </div>
+        <div class="chart-container"><canvas id="chartIncidentsByYear"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-grid two-col">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Incident Type Trends</span>
+          <span class="chart-card-badge">Dyadic Data</span>
+        </div>
+        <div class="chart-container"><canvas id="chartTypeTrends"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Attribution Difficulty Over Time</span>
+          <span class="chart-card-badge">% Unattributed</span>
+        </div>
+        <div class="chart-container"><canvas id="chartAttribution"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ═══ Section: Geographic & Attacker Analysis ═══ -->
+    <h2 class="section-title"><span class="icon">🌐</span> Geographic & Attacker Analysis</h2>
+    <div class="charts-grid two-col">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Top Initiator Countries</span>
+          <span class="chart-card-badge">Attributed Only</span>
+        </div>
+        <div class="chart-container"><canvas id="chartInitiatorCountries"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Top Targeted Countries</span>
+          <span class="chart-card-badge">By Receiver</span>
+        </div>
+        <div class="chart-container"><canvas id="chartReceiverCountries"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-grid full-width">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Top Attack Corridors (Initiator → Receiver)</span>
+          <span class="chart-card-badge">Dyadic Records</span>
+        </div>
+        <div class="chart-container"><canvas id="chartCorridors"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ═══ Section: Actor & Target Profiling ═══ -->
+    <h2 class="section-title"><span class="icon">🎭</span> Actor & Target Profiling</h2>
+    <div class="charts-grid two-col">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Initiator Category</span>
+          <span class="chart-card-badge">Who Attacks</span>
+        </div>
+        <div class="chart-container"><canvas id="chartInitiatorCats"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Target Sector</span>
+          <span class="chart-card-badge">Who Gets Hit</span>
+        </div>
+        <div class="chart-container"><canvas id="chartReceiverCats"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ═══ Section: Technical Analysis ═══ -->
+    <h2 class="section-title"><span class="icon">🔬</span> Technical Analysis</h2>
+    <div class="charts-grid two-col">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">MITRE ATT&CK Initial Access</span>
+          <span class="chart-card-badge">~15% Coverage</span>
+        </div>
+        <div class="chart-container"><canvas id="chartMitre"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Weighted Intensity by Actor Type</span>
+          <span class="chart-card-badge">Boxplot</span>
+        </div>
+        <div class="chart-container"><canvas id="chartIntensity"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ═══ Section: Cross-Dimensional Heatmaps ═══ -->
+    <h2 class="section-title"><span class="icon">🗺️</span> Cross-Dimensional Analysis</h2>
+    <div class="charts-grid two-col">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Conflict Issue × Initiator Category</span>
+          <span class="chart-card-badge">Heatmap</span>
+        </div>
+        <div class="heatmap-container" id="heatmapConflict"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Incident Type × Target Sector</span>
+          <span class="chart-card-badge">Heatmap</span>
+        </div>
+        <div class="heatmap-container" id="heatmapReceiver"></div>
+      </div>
+    </div>
+
+    <!-- ═══ Geopolitical Insights ═══ -->
+    <h2 class="section-title"><span class="icon">💡</span> Key Geopolitical Insights</h2>
+    <div class="insight-grid">
+      <div class="insight-card corridor">
+        <div class="insight-title">🇨🇳 → 🇺🇸 China–US Cyber Rivalry</div>
+        <p class="insight-text">The China → USA corridor is the <span class="insight-stat">#1 attack corridor</span> globally, dominated by state-sponsored espionage operations targeting government and defense sectors.</p>
+      </div>
+      <div class="insight-card corridor">
+        <div class="insight-title">🇷🇺 → 🇺🇦 Russia–Ukraine Conflict</div>
+        <p class="insight-text">Russia's cyber operations against Ukraine have <span class="insight-stat">surged since 2022</span>, making it one of the most active attack corridors with high-intensity disruption attacks.</p>
+      </div>
+      <div class="insight-card trend">
+        <div class="insight-title">📊 10× Volume Surge</div>
+        <p class="insight-text">Incidents surged from <span class="insight-stat">~71 in 2020 to 700+ in 2023</span>, driven by the Russia-Ukraine war and expanded tracking — the opposite trend from breach-notification databases.</p>
+      </div>
+      <div class="insight-card warning">
+        <div class="insight-title">⚠️ Attribution Gap</div>
+        <p class="insight-text"><span class="insight-stat">~34%</span> of incidents have no confident attribution. Recent years look worse due to recency bias — investigations are still ongoing.</p>
+      </div>
+      <div class="insight-card critical">
+        <div class="insight-title">🔴 State Actors Hit Harder</div>
+        <p class="insight-text">Despite lower volume, state actors have <span class="insight-stat">higher median intensity</span> scores than non-state groups, indicating more impactful and sophisticated operations.</p>
+      </div>
+      <div class="insight-card trend">
+        <div class="insight-title">💰 Ransomware Explosion</div>
+        <p class="insight-text">Ransomware has become a <span class="insight-stat">dominant attack type since 2020</span>, with dyadic records growing dramatically alongside disruption and data theft operations.</p>
+      </div>
+    </div>
+
+    <!-- ═══ Incident Explorer Table ═══ -->
+    <h2 class="section-title"><span class="icon">📋</span> Incident Explorer</h2>
+    <section class="table-section">
+      <div class="table-controls">
+        <input type="text" class="table-search" id="tableSearch" placeholder="Search incidents by name, country, type…">
+        <span class="table-count" id="tableCount">Showing 0 of 0 incidents</span>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table" id="incidentTable">
+          <thead>
+            <tr>
+              <th data-sort="incident_id">ID</th>
+              <th data-sort="name">Incident Name</th>
+              <th data-sort="year">Year</th>
+              <th data-sort="incident_type_clean">Type</th>
+              <th data-sort="initiator_country">Initiator</th>
+              <th data-sort="receiver_country">Target</th>
+              <th data-sort="initiator_cat_clean">Actor</th>
+              <th data-sort="weighted_intensity">Intensity</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </section>
+
+    <!-- ═══ Footer ═══ -->
+    <footer class="dashboard-footer">
+      <p>
+        Data: <a href="https://zenodo.org/records/14965395" target="_blank">EURepoC v1.3.2</a> •
+        European Repository of Cyber Incidents •
+        Extracted March 2025
+      </p>
+    </footer>
+
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+{
+  "shapes": {
+    "global": [
+      3414,
+      86
+    ],
+    "dyadic": [
+      4296,
+      58
+    ],
+    "attribution": [
+      5217,
+      18
+    ],
+    "receiver": [
+      12180,
+      6
+    ]
+  },
+  "duplicates": {
+    "global_id_dupes": 0,
+    "global_row_dupes": 0,
+    "dyadic_id_dupes": 3280
+  },
+  "redundant_columns": {
+    "initiator_country_identical": true,
+    "initiator_category_identical": true
+  },
+  "missingness": [
+    {
+      "column": "casualties",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 100.0,
+      "effective_missing_pct": 100.0
+    },
+    {
+      "column": "evidence_for_sanctions_indicator",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 99.8,
+      "effective_missing_pct": 99.8
+    },
+    {
+      "column": "user_interaction",
+      "true_nan_pct": 4.2,
+      "disguised_null_pct": 94.8,
+      "effective_missing_pct": 99.0
+    },
+    {
+      "column": "economic_impact",
+      "true_nan_pct": 48.2,
+      "disguised_null_pct": 49.0,
+      "effective_missing_pct": 97.2
+    },
+    {
+      "column": "mitre_initial_access",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 85.2,
+      "effective_missing_pct": 85.2
+    },
+    {
+      "column": "offline_conflict_issue",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 71.9,
+      "effective_missing_pct": 71.9
+    },
+    {
+      "column": "state_responsibility_actor",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 68.0,
+      "effective_missing_pct": 68.0
+    },
+    {
+      "column": "mitre_impact",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 57.5,
+      "effective_missing_pct": 57.5
+    },
+    {
+      "column": "cyber_conflict_issue",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 53.3,
+      "effective_missing_pct": 53.3
+    },
+    {
+      "column": "initiator_country",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 51.7,
+      "effective_missing_pct": 51.7
+    },
+    {
+      "column": "il_breach_indicator",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 45.2,
+      "effective_missing_pct": 45.2
+    },
+    {
+      "column": "response_indicator",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 42.8,
+      "effective_missing_pct": 42.8
+    },
+    {
+      "column": "initiator_category",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 34.3,
+      "effective_missing_pct": 34.3
+    },
+    {
+      "column": "attribution_type",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 24.3,
+      "effective_missing_pct": 24.3
+    },
+    {
+      "column": "attribution_basis",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 23.4,
+      "effective_missing_pct": 23.4
+    },
+    {
+      "column": "receiver_country",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 4.3,
+      "effective_missing_pct": 4.3
+    },
+    {
+      "column": "zero_days",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 4.1,
+      "effective_missing_pct": 4.1
+    },
+    {
+      "column": "receiver_category",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 4.0,
+      "effective_missing_pct": 4.0
+    },
+    {
+      "column": "incident_type",
+      "true_nan_pct": 0.0,
+      "disguised_null_pct": 0.1,
+      "effective_missing_pct": 0.1
+    }
+  ],
+  "dates": {
+    "start_date_unparseable": 92,
+    "end_date_unparseable": 1873,
+    "end_date_missing_pct": 54.9,
+    "end_before_start": 2
+  },
+  "token_duplication": {
+    "receiver_country": 35.0,
+    "initiator_country": 5.7,
+    "receiver_category": 27.4,
+    "initiator_category": 5.6,
+    "incident_type": 0.7,
+    "receiver_regions": 36.8
+  },
+  "date_range": {
+    "earliest": "2000-01-01",
+    "latest": "2024-12-19"
+  }
+}
